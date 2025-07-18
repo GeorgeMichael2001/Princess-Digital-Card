@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Princess' digital success Card</title>
+    <!-- Favicon (optional, but good for professionalism) -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50%25' y='50%25' style='dominant-baseline:central;text-anchor:middle;font-size:90px;'%3E%E2%9C%85%3C/text%3E%3C/svg%3E" type="image/svg+xml">
+    <!-- Tone.js library for sound generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
+    <style>
+        /* CSS for the Success Card */
+        body {
+            font-family: 'Inter', sans-serif; /* Using Inter font for a modern look */
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #e0f2f7 0%, #cce7f0 100%); /* Subtle gradient background */
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box; /* Include padding in element's total width and height */
+        }
+
+        .card-container {
+            background-color: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05); /* More pronounced shadow with subtle border */
+            padding: 30px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            position: relative; /* Needed for absolute positioning of elements inside */
+            overflow: hidden; /* Ensures nothing overflows rounded corners */
+            transition: transform 0.3s ease-in-out; /* Smooth transition for hover effect */
+        }
+
+        .card-container:hover {
+            transform: translateY(-5px); /* Slight lift on hover */
+        }
+
+        header h1 {
+            color: #2c3e50; /* Dark blue for heading */
+            font-size: 2.4em; /* Slightly larger heading */
+            margin-bottom: 10px;
+            position: relative;
+            padding-bottom: 15px; /* More space for the underline */
+            letter-spacing: -0.5px; /* Tighter letter spacing */
+        }
+
+        header h1::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            transform: translateX(-50%);
+            width: 80px; /* Wider underline */
+            height: 4px; /* Thicker underline */
+            background-color: #3498db; /* Accent blue line */
+            border-radius: 2px;
+        }
+
+        .intro-message {
+            font-size: 1.15em; /* Slightly larger text */
+            color: #555;
+            margin-bottom: 25px;
+            line-height: 1.8;
+        }
+
+        /* Styling for UACE text */
+        .uace-highlight {
+            font-weight: bold;
+            text-decoration: underline;
+            text-decoration-style: double; /* Double underline */
+            text-decoration-color: #3498db; /* Blue underline color */
+        }
+
+
+        .quote-section {
+            background-color: #e8f0fe; /* Light blue background for quote */
+            border-left: 5px solid #3498db;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-style: italic;
+            color: #444;
+            min-height: 80px; /* Ensure consistent height */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0; /* Hidden initially, will fade in */
+            transform: translateY(20px); /* Slightly move down initially */
+            animation: fadeInQuote 0.8s forwards; /* Animation for initial load */
+            animation-delay: 0.5s; /* Delay for a smoother intro */
+            box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.05); /* Subtle inner shadow */
+        }
+
+        .quote-text {
+            font-size: 1.4em; /* Slightly larger quote text */
+            margin-bottom: 10px;
+            font-weight: 500; /* Medium weight for readability */
+        }
+
+        .quote-author {
+            font-size: 0.95em; /* Slightly larger author text */
+            color: #666;
+            font-weight: bold;
+        }
+
+        .action-area {
+            margin-bottom: 25px;
+        }
+
+        .action-button {
+            background-color: #2ecc71; /* Green button for positive action */
+            color: white;
+            border: none;
+            padding: 14px 30px; /* Larger padding */
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.15em; /* Slightly larger font */
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 6px 15px rgba(46, 204, 113, 0.3); /* Green shadow */
+            letter-spacing: 0.5px; /* Slightly wider letter spacing */
+        }
+
+        .action-button:hover {
+            background-color: #27ae60; /* Darker green on hover */
+            transform: translateY(-3px); /* More pronounced lift effect */
+            box-shadow: 0 8px 20px rgba(46, 204, 113, 0.4); /* Stronger green shadow on hover */
+        }
+
+        .action-button:active {
+            transform: translateY(0); /* Press effect */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-container {
+            width: 80%;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            height: 18px; /* Slightly taller progress bar */
+            margin: 25px auto 15px; /* More margin */
+            overflow: hidden;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); /* Inner shadow for depth */
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%; /* Initial width */
+            background-color: #f1c40f; /* Set initial background-color to first color in JS array */
+            border-radius: 5px;
+            transition: width 0.5s ease-out, background-color 0.5s ease; /* Smooth transition for width and color */
+        }
+
+        .progress-message {
+            font-size: 1.05em; /* Slightly larger */
+            color: #666;
+            margin-bottom: 20px;
+            min-height: 20px; /* Reserve space */
+        }
+
+        .final-message {
+            font-size: 1.25em; /* Larger final message */
+            color: #27ae60; /* Green for success */
+            font-weight: bold;
+            margin-top: 25px;
+            animation: bounceIn 5s forwards; /* Animation for final message, now 5 seconds */
+            display: none; /* Hidden until 100% progress */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.05); /* Subtle text shadow */
+        }
+
+        .developer-note {
+            background-color: #f8f8f8;
+            border-top: 1px dashed #ddd;
+            padding-top: 20px;
+            margin-top: 30px;
+            font-size: 0.9em;
+            color: #777;
+            text-align: left;
+            display: flex; /* Use flexbox for image and text alignment */
+            flex-direction: column; /* Stack elements vertically */
+            align-items: center; /* Center items horizontally */
+        }
+
+        .developer-note h3 {
+            color: #34495e;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .developer-photo {
+            width: 90px; /* Original size */
+            height: 90px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #3498db;
+            margin-bottom: 15px; /* Fixed typo here */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            cursor: pointer; /* Indicate it's clickable */
+            transition: all 0.3s ease-in-out; /* Smooth transition for size change */
+            /* Removed margin-left: auto and margin-right to re-center */
+        }
+
+        .developer-photo.enlarged {
+            width: 400px; /* Significantly larger size for desktop */
+            height: 400px;
+            border: 8px solid #2ecc71; /* Thicker border when enlarged */
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4); /* Stronger shadow when enlarged */
+        }
+
+        /* Sibling Greetings Section */
+        .sibling-greetings {
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 1px dashed #e0e0e0;
+        }
+
+        .sibling-greetings h2 {
+            font-size: 1.8em;
+            color: #34495e;
+            margin-bottom: 20px;
+            border-bottom: none; /* Remove underline for this sub-heading */
+            padding-bottom: 0;
+            text-align: center;
+        }
+
+        .sibling-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px; /* Space between sibling cards */
+            margin-top: 20px;
+        }
+
+        .sibling-card {
+            background-color: #fcfcfc;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .sibling-name {
+            font-size: 1.4em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: inline-block; /* Essential for transform to work */
+            padding: 5px 0; /* Give some vertical padding for animation */
+        }
+
+        .sibling-button {
+            background-color: #9b59b6; /* Purple button for greetings */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 3px 8px rgba(155, 89, 182, 0.3);
+            /* Ensure button can rotate */
+            display: inline-block;
+            transform-origin: center center;
+        }
+
+        .sibling-button:hover {
+            background-color: #8e44ad;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 12px rgba(155, 89, 182, 0.4);
+        }
+
+        .sibling-greeting-message {
+            margin-top: 15px;
+            font-size: 1.2em;
+            color: #2980b9; /* Blue for greeting message */
+            font-weight: bold;
+            min-height: 30px; /* Reserve space */
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.5s ease, transform 0.5s ease; /* Smooth transition for greeting message */
+        }
+
+        .sibling-greeting-message.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Animation for rotating button (now 2s, one iteration) */
+        @keyframes rotate-button {
+            0% { transform: rotate(0deg); background-color: #f1c40f; } /* Yellow */
+            14% { background-color: #3498db; } /* Blue */
+            28% { background-color: #e91e63; } /* Pink */
+            42% { background-color: #f39c12; } /* Orange */
+            56% { background-color: #2ecc71; } /* Green */
+            70% { background-color: #9b59b6; } /* Purple */
+            84% { background-color: #a0522d; } /* Brown */
+            100% { transform: rotate(360deg); background-color: #f1c40f; } /* Back to Yellow */
+        }
+
+        .rotating-button {
+            animation: rotate-button 2s linear 1; /* Play once over 2 seconds */
+        }
+
+        /* General Animations */
+        @keyframes fadeInQuote {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            70% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .card-container {
+                padding: 20px;
+                margin: 10px;
+            }
+            header h1 {
+                font-size: 1.8em;
+            }
+            .quote-text {
+                font-size: 1.1em;
+            }
+            .action-button {
+                padding: 10px 20px;
+                font-size: 1em;
+            }
+            .developer-photo {
+                width: 70px;
+                height: 70px;
+                /* Re-center for mobile as well */
+                margin: 0 auto 15px auto;
+            }
+            .developer-photo.enlarged {
+                width: 280px; /* Larger size for mobile */
+                height: 280px;
+            }
+            .sibling-greetings h2 {
+                font-size: 1.5em;
+            }
+            .sibling-name {
+                font-size: 1.2em;
+            }
+            .sibling-button {
+                font-size: 0.85em;
+                padding: 8px 15px;
+            }
+            .sibling-greeting-message {
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="card-container">
+        <header>
+            <h1>Wishing You An Immense Success!</h1>
+        </header>
+
+        <section class="intro-message">
+            <p>I know how incredibly dedicated you are to your studies, your dreams and fullfiling your future Ambition. It's truly inspiring to witness your focus and hard work for <span class="uace-highlight">UACE</span>.</p>
+            <p>Just as you're pouring your energy into medicine.</p>
+        </section>
+
+        <section class="quote-section" id="quoteSection">
+            <p class="quote-text" id="quoteText"></p>
+            <p class="quote-author" id="quoteAuthor"></p>
+        </section>
+
+        <section class="action-area">
+            <button class="action-button" id="progressButton">Keep Pushing Forward, Danieeeh!</button>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <p class="progress-message" id="progressMessage">Click the button to visualize your progress!</p>
+            <p class="final-message" id="finalMessage">You're on your way to becoming an amazing doctor! ✨</p>
+        </section>
+
+        <!-- New Sibling Greetings Section -->
+        <section class="sibling-greetings">
+            <h2>Special Greetings!!!</h2>
+            <div class="sibling-container">
+                <div class="sibling-card">
+                    <span class="sibling-name" id="lamunuName">"Janet Lamunu"</span>
+                    <button class="sibling-button" data-sibling="Lamunu Janet" id="lamunuButton">Send Greeting</button>
+                    <p class="sibling-greeting-message" id="lamunuGreeting"></p>
+                </div>
+                <div class="sibling-card">
+                    <span class="sibling-name" id="adongName"> "Cindy Adong"</span>
+                    <button class="sibling-button" data-sibling="Adong Cindy" id="adongButton">Send Greeting</button>
+                    <p class="sibling-greeting-message" id="adongGreeting"></p>
+                </div>
+            </div>
+        </section>
+
+        <section class="developer-note">
+            <!-- IMPORTANT: Replace the src below with the PUBLIC URL of your photo after uploading it to a service like Imgur or GitHub! -->
+            <img src="Mike01.jpg" alt="George Michae, the developer" class="developer-photo" id="developerPhoto">
+            <p class="copyright"><strong>&copy; Developer: Eng. George Michael</strong></p>
+            <p>The nature of a Software Engineer often leans towards listening rather than overt verbal communication. Their strength lies in developing strong analytical skills and cultivating perfect problem-solving abilities. They are keen observers, often expressing their intricate thoughts and solutions digitally.</p>
+            <p>They are frequently spoken of by their hard work in isolation, much like the precision and dedication of robots or droids. While they possess profound problem-solving capabilities, they are sometimes perceived as "naive" by other specialists, such as lawyers, due to their comparatively lesser emphasis on communication perfection.</p>
+            <p>Ultimately, their core contributions involve designing robust software architectures and writing clean, efficient code, which speaks volumes about their impact.</p>
+            <p>I genuinely believe in your potential and your dream. Focus entirely on your exams. You have everything it takes to succeed!</p>
+        </section>
+    </div>
+
+    <script>
+        // JavaScript for the Success Card
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("Success Card JavaScript is running!"); // This message will appear in your browser's console
+
+            const quotes = [
+                { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
+                { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston S. Churchill" },
+                { text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt" },
+                { text: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt" },
+                { text: "Hard work beats talent when talent doesn't work hard.", author: "Tim Notke" },
+                { text: "The best way to predict the future is to create it.", author: "Peter Drucker" },
+                { text: "Anything you hate is teaching you unconditional love.", author: "Mummy" },
+                { text: "On the path to success there's always WE, and it's okay to be inconvenience by those who cares about us", author: "George Michael" },
+                { text: "When the time is right, I the Lord will make it happen.", author: "Isaiah 60:22" },
+                { text: "Perseverance is not a long race; it is many short races one after the other.", author: "Walter Elliot" },
+                { text: "There should be a time when you realise that everything happening in your life is Your Fault.",author: "Janet Lamunu" },
+                { text: "Your dedication today will define your success tomorrow.", author: "Anonymous" },
+                { text: "The expert in anything was once a beginner.", author: "Helen Hayes" },
+                { text: "Strive for progress, not perfection.", author: "Anonymous" }
+            ];
+
+            const progressBarColors = [
+                '#f1c40f', // Yellow
+                '#3498db', // Blue
+                '#e91e63', // Pink
+                '#f39c12', // Orange
+                '#2ecc71', // Green
+                '#9b59b6', // Purple
+                '#a0522d'  // Brown
+            ];
+            let currentProgressBarColorIndex = 0;
+
+            // Initialize Tone.js for sound
+            const synth = new Tone.Synth().toDestination();
+            // A simple scale for a celebratory sound, prolonged for 5 seconds
+            const progressNotes = [
+                { note: "C5", time: 0.0 },
+                { note: "E5", time: 1.25 }, // Spread notes over 5 seconds
+                { note: "G5", time: 2.5 },
+                { note: "C6", time: 3.75 }
+            ];
+
+            // Synths for sibling greetings (two different sounds)
+            const greetingSynth1 = new Tone.Synth().toDestination(); // For Lamunu Janet
+            const greetingSynth2 = new Tone.Synth().toDestination(); // For Adong Cindy
+
+
+            const quoteSection = document.getElementById('quoteSection');
+            const quoteText = document.getElementById('quoteText');
+            const quoteAuthor = document.getElementById('quoteAuthor');
+            const progressButton = document.getElementById('progressButton');
+            const progressBar = document.getElementById('progressBar');
+            const progressMessage = document.getElementById('progressMessage');
+            const finalMessage = document.getElementById('finalMessage');
+            const developerPhoto = document.getElementById('developerPhoto'); // Get the image element
+
+            let progressClicks = 0;
+            const maxClicks = 7; // Number of clicks to reach 100% progress
+
+            // Function to display a random quote
+            function displayRandomQuote() {
+                const randomIndex = Math.floor(Math.random() * quotes.length);
+                const randomQuote = quotes[randomIndex];
+
+                // Apply fade-out effect
+                quoteSection.style.opacity = 0;
+                quoteSection.style.transform = 'translateY(20px)';
+
+                setTimeout(() => {
+                    quoteText.textContent = `"${randomQuote.text}"`;
+                    quoteAuthor.textContent = `- ${randomQuote.author}`;
+                    // Apply fade-in effect
+                    quoteSection.style.opacity = 1;
+                    quoteSection.style.transform = 'translateY(0)';
+                }, 500); // Wait for fade-out to complete before changing content
+            }
+
+            // Initial quote display
+            displayRandomQuote();
+
+            // Handle button click for progress and new quotes
+            progressButton.addEventListener('click', () => {
+                // Start Tone.js context on first interaction (required by browsers)
+                if (Tone.context.state !== 'running') {
+                    Tone.start();
+                    console.log("Tone.js audio context started.");
+                }
+
+                if (progressClicks < maxClicks) {
+                    progressClicks++;
+                    const progressPercentage = (progressClicks / maxClicks) * 100;
+                    progressBar.style.width = `${progressPercentage}%`;
+
+                    // Change progress bar color
+                    currentProgressBarColorIndex = (currentProgressBarColorIndex + 1) % progressBarColors.length;
+                    progressBar.style.backgroundColor = progressBarColors[currentProgressBarColorIndex];
+
+
+                    if (progressClicks === maxClicks) {
+                        progressMessage.textContent = "Almost there! Keep going!";
+                        progressButton.textContent = "Success Awaits!";
+                        setTimeout(() => {
+                            finalMessage.style.display = 'block'; // Show final message
+                            progressButton.style.display = 'none'; // Hide button
+                            progressMessage.style.display = 'none'; // Hide progress message
+                            progressBar.style.backgroundColor = '#27ae60'; // Final green color
+
+                            // Play celebratory sound, prolonged for 5 seconds
+                            progressNotes.forEach(noteData => {
+                                synth.triggerAttackRelease(noteData.note, "0.5s", Tone.now() + noteData.time); // Each note lasts 0.5s
+                            });
+
+                        }, 600); // Delay for a smoother transition
+                    } else {
+                        progressMessage.textContent = `You're ${progressPercentage.toFixed(0)}% closer to your goal!`;
+                        displayRandomQuote(); // Get a new quote with each click
+                    }
+                }
+            });
+
+            // Sibling Greetings Functionality
+            const lamunuButton = document.getElementById('lamunuButton');
+            const adongButton = document.getElementById('adongButton');
+            const lamunuGreeting = document.getElementById('lamunuGreeting');
+            const adongGreeting = document.getElementById('adongGreeting');
+
+            function sendSiblingGreeting(siblingName, greetingElement, buttonElement) {
+                // Start Tone.js context on first interaction (required by browsers)
+                if (Tone.context.state !== 'running') {
+                    Tone.start();
+                    console.log("Tone.js audio context started.");
+                }
+
+                // Play a different sound based on the sibling
+                if (siblingName === 'Ammaah') { // Updated to 'Ammaah'
+                    greetingSynth1.triggerAttackRelease("C5", "2s"); // A higher, sustained note for Janet
+                } else if (siblingName === 'Cindy') { // Updated to 'Cindy'
+                    greetingSynth2.triggerAttackRelease("G4", "2s"); // A lower, sustained note for Cindy
+                }
+
+                // Remove animation from any other button currently animating
+                document.querySelectorAll('.rotating-button').forEach(el => {
+                    if (el !== buttonElement) {
+                        el.classList.remove('rotating-button');
+                    }
+                });
+
+                // Add animation to the clicked button
+                buttonElement.classList.add('rotating-button');
+
+                // Clear previous greeting message and hide it
+                lamunuGreeting.classList.remove('visible');
+                adongGreeting.classList.remove('visible');
+                lamunuGreeting.textContent = '';
+                adongGreeting.textContent = '';
+
+                // Display new greeting message
+                greetingElement.textContent = `Send my greeting to ${siblingName}! 👋`; // Personalized greeting
+                setTimeout(() => {
+                    greetingElement.classList.add('visible');
+                }, 100); // Small delay for fade-in effect
+
+                // Remove animation after 2 seconds (to match the sound duration)
+                setTimeout(() => {
+                    buttonElement.classList.remove('rotating-button');
+                }, 2000); // 2 seconds for the animation to complete
+            }
+
+            lamunuButton.addEventListener('click', () => {
+                sendSiblingGreeting('Ammaah', lamunuGreeting, lamunuButton); // Pass updated sibling name
+            });
+
+            adongButton.addEventListener('click', () => {
+                sendSiblingGreeting('Cindy', adongGreeting, adongButton); // Pass updated sibling name
+            });
+
+            // Image click functionality
+            developerPhoto.addEventListener('click', () => {
+                developerPhoto.classList.toggle('enlarged');
+            });
+        });
+    </script>
+</body>
+</html>
